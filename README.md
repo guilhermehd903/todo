@@ -4,9 +4,6 @@
 - **Nome:** Guilherme Brasil
 - **E-mail:** guilhermegdrag@gmail.com
 
-## Título do Projeto
-Todo
-
 ## Descrição
 Este projeto Todo é um teste de estágio para a empresa unimble. Ele foi desenvolvido utilizando VueJS 3 para o frontend e NodeJS para o backend, ambos escritos em TypeScript. O banco de dados utilizado foi o SQLite e o arquivo `.env` necessário para o projeto está incluído neste repositório para fins de teste e praticidade.
 
