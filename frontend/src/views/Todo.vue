@@ -40,8 +40,6 @@
       </div>
     </Header>
 
-    <Paywall :addHidden="paywall" @update:paywall="paywall = $event" />
-
     <button
       v-if="activateVisible()"
       class="purchaseActive"
@@ -63,7 +61,6 @@ import { Options, Vue } from "vue-class-component";
 import Header from "../components/Header.vue";
 import Msg from "../components/Msg.vue";
 import AddTask from "../components/AddTask.vue";
-import Paywall from "../components/Paywall.vue";
 
 // @ts-ignore
 import api from "@/mixins/api.js";
@@ -73,7 +70,6 @@ import api from "@/mixins/api.js";
     Header,
     Msg,
     AddTask,
-    Paywall,
   },
   mixins: [api],
   data: () => ({
