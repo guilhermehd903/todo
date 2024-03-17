@@ -27,15 +27,15 @@ class TaskController {
         const taskObj = new TaskService();
         const taskUnique = await taskObj.taskIsMine(req.params.taskid, user);
 
-        if(!taskUnique){
+        if (!taskUnique) {
             obj.setError("Proibido apagar essa tarefa");
             res.json(obj);
             return;
         }
-        
+
         const delTask = await taskObj.delTask(taskUnique.id);
 
-        if(!delTask){
+        if (!delTask) {
             obj.setError("Erro ao apagar tarefa");
             res.json(obj);
             return;
@@ -51,15 +51,15 @@ class TaskController {
         const taskObj = new TaskService();
         const taskUnique = await taskObj.taskIsMine(req.params.taskid, user);
 
-        if(!taskUnique){
+        if (!taskUnique) {
             obj.setError("Proibido atualizar essa tarefa");
             res.json(obj);
             return;
         }
-        
-        const upTask = await taskObj.updateTask(taskUnique.id,state);
 
-        if(!upTask){
+        const upTask = await taskObj.updateTask(taskUnique.id, state);
+
+        if (!upTask) {
             obj.setError("Erro ao atualizar tarefa");
             res.json(obj);
             return;
@@ -77,7 +77,16 @@ class TaskController {
 
         if (!user) {
             obj.setError("ID de usuario Incorreto");
-            res.json(obj);
+            res.json(obj.obj);
+            return;
+        }
+
+        const tasksObj = new TaskService();
+        let taskQtd = await tasksObj.qtdByUser(user);
+
+        if (!userUnique?.premium && taskQtd == 5) {
+            obj.setError("Para cadastrar mais tarefas, assine plano premium!");
+            res.json(obj.obj);
             return;
         }
 
@@ -95,7 +104,7 @@ class TaskController {
 
         if (!add) {
             obj.setError("erro ao cadastrar tarefa");
-            res.status(404).json(obj);
+            res.status(404).json(obj.obj);
             return;
         }
 

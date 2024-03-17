@@ -40,10 +40,11 @@ class UserController {
         }
 
         genPassword(password, async (val: any) => {
-            let dataObj = {
+            let dataObj:Omit<User, 'id'> = {
                 email,
                 name,
                 password: val,
+                premium: false,
                 createdAt: (new Date),
                 updatedAt: (new Date)
             };

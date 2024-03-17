@@ -1,5 +1,6 @@
 <template>
   <div class="cover" v-if="!addHidden">
+    <Msg :msg="msg" :state="state" :hidden="hidden" @click="hidden = true" />
     <div class="container">
       <h2>Adicionar Tarefa</h2>
       <div class="form">
@@ -20,25 +21,25 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
+import Msg from "../components/Msg.vue"; // @ is an alias to /src
 
 // @ts-ignore
 import api from "@/mixins/api.js";
 
 @Options({
   mixins: [api],
+  components: { Msg },
   props: {
     addHidden: String,
   },
   data: () => ({
     title: "",
     content: "",
+    hidden: true,
+    msg: "",
+    state: "",
   }),
   methods: {
-    logout() {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      this.$router.push({ name: "Home" });
-    },
     async addTask() {
       if (this.title && this.content) {
         let req = await this.createTask({
@@ -48,15 +49,16 @@ import api from "@/mixins/api.js";
 
         if (req) {
           this.hidden = false;
+          this.title = "";
+          this.content = "";
+
           if (this.response.error) {
             this.msg = this.response.message;
             this.state = "error";
           } else {
             this.msg = "Tarefa criada com sucesso";
             this.state = "success";
-            this.title = "";
-            this.content = "";
-            this.$emit("newTask", this.response.data)
+            this.$emit("newTask", this.response.data);
           }
         }
       }

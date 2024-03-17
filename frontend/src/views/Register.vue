@@ -24,8 +24,8 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
-import Header from "@/components/Header.vue"; // @ is an alias to /src
-import Msg from "@/components/Msg.vue"; // @ is an alias to /src
+import Header from "../components/Header.vue"; // @ is an alias to /src
+import Msg from "../components/Msg.vue"; // @ is an alias to /src
 
 // @ts-ignore
 import api from "@/mixins/api.js";

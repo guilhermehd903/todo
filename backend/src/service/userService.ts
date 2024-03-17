@@ -37,7 +37,16 @@ class UserService {
 
     async getById(id: string) {
         try {
-            return prisma.user.findUnique({ where: { id: id }, select: { name: true, email: true, tasks: true, createdAt: true, updatedAt: true } });
+            return prisma.user.findUnique({ where: { id: id }, select: { name: true, email: true, premium: true, tasks: true, createdAt: true, updatedAt: true } });
+        } catch (err) {
+            this.error = true;
+            return;
+        }
+    }
+
+    async updateUser(id: string, data: any) {
+        try {
+            return prisma.user.update({ where: { id: id }, data: { ...data } })
         } catch (err) {
             this.error = true;
             return;

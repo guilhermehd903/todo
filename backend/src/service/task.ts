@@ -17,6 +17,15 @@ class TaskService {
         }
     }
 
+    async qtdByUser(id: string) {
+        try {
+            return (await prisma.task.findMany({ where: { userId: id } })).length;
+        } catch (err) {
+            this.error = true;
+            return;
+        }
+    }
+
     async taskIsMine(idTask: string, idUser: string) {
         try {
             return prisma.task.findUnique({ where: { id: idTask, userId: idUser } })

@@ -1,48 +1,69 @@
 <template>
-  <Msg :msg="msg" :state="state" :hidden="hidden" @click="hidden = true" />
-  <AddTask
-    :addHidden="addHiddenControll"
-    @update:addHidden="addHiddenControll = $event"
-    @newTask="updateList"
-  />
-  <Header :title="`Seja bem vindo, ${nome}`" logoff>
-    <div class="box" style="display: flex; column-gap: 15px">
-      <input
-        type="text"
-        placeholder="Pesquisar por nome"
-        v-model="taskSearch"
-        @keyup="filterTaskByName"
-      />
-      <button @click="addHiddenControll = !addHiddenControll">Adicionar</button>
-    </div>
-    <br />
-    <div class="box">
-      <ul id="tasks">
-        <li v-for="t in task" :key="t.id">
-          <div class="info">
-            <input
-              type="checkbox"
-              name="check"
-              v-model="t.state"
-              @change="setTaskState(t)"
-            />
-            <p>{{ t.title }}</p>
-          </div>
-          <div class="buttons">
-            <button class="del" @click="deleteTask(t)">Apagar</button>
-            <button class="plus" @click="handleContent(t)">+</button>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </Header>
+  <div>
+    <Msg :msg="msg" :state="state" :hidden="hidden" @click="hidden = true" />
+    <AddTask
+      :addHidden="addHiddenControll"
+      @update:addHidden="addHiddenControll = $event"
+      @newTask="updateList"
+    />
+    <Header :title="`Seja bem vindo, ${nome}`" logoff :isPremium="premium">
+      <div class="box" style="display: flex; column-gap: 15px">
+        <input
+          type="text"
+          placeholder="Pesquisar por nome"
+          v-model="taskSearch"
+          @keyup="filterTaskByName"
+        />
+        <button @click="addHiddenControll = !addHiddenControll">
+          Adicionar
+        </button>
+      </div>
+      <br />
+      <div class="box">
+        <ul id="tasks">
+          <li v-for="t in task" :key="t.id">
+            <div class="info">
+              <input
+                type="checkbox"
+                name="check"
+                v-model="t.state"
+                @change="setTaskState(t)"
+              />
+              <p>{{ t.title }}</p>
+            </div>
+            <div class="buttons">
+              <button class="del" @click="deleteTask(t)">Apagar</button>
+              <button class="plus" @click="handleContent(t)">+</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </Header>
+
+    <Paywall :addHidden="paywall" @update:paywall="paywall = $event" />
+
+    <button
+      v-if="activateVisible()"
+      class="purchaseActive"
+      @click="activateSubscription"
+    >
+      Ativar
+    </button>
+    <button
+      v-if="!premium"
+      class="purchase"
+      @click="getPaymentLink"
+      v-text="btnLoading"
+    ></button>
+  </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
-import Header from "@/components/Header.vue"; // @ is an alias to /src
-import Msg from "@/components/Msg.vue"; // @ is an alias to /src
-import AddTask from "@/components/AddTask.vue"; // @ is an alias to /src
+import Header from "../components/Header.vue";
+import Msg from "../components/Msg.vue";
+import AddTask from "../components/AddTask.vue";
+import Paywall from "../components/Paywall.vue";
 
 // @ts-ignore
 import api from "@/mixins/api.js";
@@ -52,6 +73,7 @@ import api from "@/mixins/api.js";
     Header,
     Msg,
     AddTask,
+    Paywall,
   },
   mixins: [api],
   data: () => ({
@@ -59,12 +81,21 @@ import api from "@/mixins/api.js";
     taskFull: [],
     nome: "",
     task: [],
+    premium: false,
+    btnLoading: "Assine ja",
     hidden: true,
     addHiddenControll: true,
     msg: "",
     state: "",
+    paywall: false,
   }),
   methods: {
+    activateVisible() {
+      let activate = localStorage.getItem("activate") || "";
+      if (activate.length > 0) return true;
+
+      return false;
+    },
     updateList(payload: any) {
       this.task.push(payload);
     },
@@ -75,6 +106,27 @@ import api from "@/mixins/api.js";
     },
     handleContent(obj: any) {
       alert(obj.content);
+    },
+    async getPaymentLink() {
+      if (this.btnLoading == "Carregando...") return;
+
+      this.btnLoading = "Carregando...";
+
+      let req = await this.pay();
+
+      this.btnLoading = "Assine ja";
+      if (req) {
+        localStorage.setItem("activate", this.response.data.id);
+        window.location.href = this.response.data.url;
+      }
+    },
+    async activateSubscription() {
+      let req = await this.confirmPay();
+
+      if (req) {
+        window.location.reload();
+        localStorage.removeItem("activate");
+      }
     },
     async deleteTask(obj: any) {
       if (!window.confirm("Deseja realmente apagar essa tarefa?")) {
@@ -121,6 +173,7 @@ import api from "@/mixins/api.js";
     this.nome = data.name;
     this.task = data.tasks;
     this.taskFull = data.tasks;
+    this.premium = data.premium;
   },
 })
 export default class Todo extends Vue {}
@@ -194,5 +247,32 @@ export default class Todo extends Vue {}
   background: transparent;
   margin-left: 15px;
   cursor: pointer;
+}
+.purchase,
+.purchaseActive {
+  background: #42b983;
+  color: #fff;
+  border: 0;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  box-shadow: 0px 0px 10px 4px rgba(0, 0, 0, 0.1);
+  width: 150px;
+  height: 50px;
+  cursor: pointer;
+  border-radius: 25px;
+}
+.purchase:hover {
+  background: #248f5f;
+  transform: scale(1.1);
+}
+
+.purchaseActive {
+  background: #fdc173;
+  bottom: 85px;
+}
+.purchaseActive:hover {
+  background: #c09051;
+  transform: scale(1.1);
 }
 </style>

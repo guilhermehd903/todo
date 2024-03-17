@@ -81,6 +81,23 @@ export default {
             this.setEndpoint(`task/update/${id}`);
 
             return this.req();
+        },
+        async pay() {
+            let jwt = localStorage.getItem("token") || "";
+            this.header.authorization = jwt;
+            this.method = "POST";
+            this.setEndpoint(`user/pay`);
+
+            return this.req();
+        },
+        async confirmPay(){
+            let jwt = localStorage.getItem("token") || "";
+            let id = localStorage.getItem("activate") || "";
+            this.header.authorization = jwt;
+            this.method = "POST";
+            this.setEndpoint(`user/confirm/${id}`);
+
+            return this.req();
         }
     }
 }

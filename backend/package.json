@@ -19,6 +19,7 @@
     "jsonwebtoken": "^9.0.2",
     "prisma": "^5.10.2",
     "sqlite": "^5.1.1",
+    "stripe": "^14.21.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"
   },

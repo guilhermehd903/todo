@@ -5,12 +5,14 @@ import dotenv from "dotenv";
 
 import userRoute from "./routes/user";
 import taskRoute from "./routes/task";
+import PaymentController from "./controllers/paymentController";
 
 const app = express();
 
 dotenv.config();
 
 app.use(cors());
+
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
