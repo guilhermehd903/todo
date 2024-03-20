@@ -90,6 +90,12 @@ import api from "@/mixins/api.js";
       console.log(add);
     },
   },
+  created() {
+    if (localStorage.getItem("token") != null) {
+      this.$router.push({ name: "Todo" });
+      return;
+    }
+  },
 })
 export default class Register extends Vue {}
 </script>

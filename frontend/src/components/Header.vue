@@ -28,7 +28,6 @@ import { Options, Vue } from "vue-class-component";
   methods: {
     logout() {
       localStorage.removeItem("token");
-      localStorage.removeItem("user");
       this.$router.push({ name: "Home" });
     },
   },

@@ -82,6 +82,14 @@ export default {
 
             return this.req();
         },
+        async auth() {
+            let jwt = localStorage.getItem("token") || "";
+            this.header.authorization = jwt;
+            this.method = "GET";
+            this.setEndpoint(`user/auth`);
+
+            return this.req();
+        },
         async pay() {
             let jwt = localStorage.getItem("token") || "";
             this.header.authorization = jwt;

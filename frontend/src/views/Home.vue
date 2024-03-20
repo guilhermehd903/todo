@@ -16,8 +16,8 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
-import Header from "@/components/Header.vue"; // @ is an alias to /src
-import Msg from "@/components/Msg.vue"; // @ is an alias to /src
+import Header from "../components/Header.vue"; // @ is an alias to /src
+import Msg from "../components/Msg.vue"; // @ is an alias to /src
 
 // @ts-ignore
 import api from "@/mixins/api.js";
@@ -66,6 +66,12 @@ import api from "@/mixins/api.js";
         }
       }
     },
+  },
+  created() {
+    if (localStorage.getItem("token") != null) {
+      this.$router.push({ name: "Todo" });
+      return;
+    }
   },
 })
 export default class Home extends Vue {}

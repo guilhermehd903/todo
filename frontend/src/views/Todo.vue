@@ -120,6 +120,13 @@ import api from "@/mixins/api.js";
       let req = await this.confirmPay();
 
       if (req) {
+        if (this.response.error) {
+          this.hidden = false;
+          this.msg = this.response.message;
+          this.state = "error";
+          return;
+        }
+
         window.location.reload();
         localStorage.removeItem("activate");
       }
@@ -159,13 +166,20 @@ import api from "@/mixins/api.js";
       }
     },
   },
-  created() {
-    if (!localStorage.getItem("user")) {
+  async created() {
+    if (localStorage.getItem("token") == null) {
       this.$router.push({ name: "Home" });
+      return;
     }
 
-    let obj = localStorage.getItem("user") || "";
-    let data = JSON.parse(obj);
+    let req = await this.auth();
+
+    if(!req || this.response.error){
+      this.$router.push({ name: "Home" });
+      return;
+    }
+
+    let data = this.response.data;
     this.nome = data.name;
     this.task = data.tasks;
     this.taskFull = data.tasks;
